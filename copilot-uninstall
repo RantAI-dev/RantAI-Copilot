@@ -1,0 +1,36 @@
+#!/usr/bin/env sh
+# Remove the RantAI-Copilot extension from this host.
+#   copilot-uninstall         # remove Copilot bits (skills, web console, commands) — keep rantaiclaw
+#   copilot-uninstall --all   # ALSO remove the rantaiclaw binary + bundled bun
+set -eu
+DEST="${BINDIR:-$HOME/.local/bin}"
+PROFILE="${RANTAICLAW_PROFILE:-default}"
+SK="$HOME/.rantaiclaw/profiles/$PROFILE/workspace/skills"
+say() { printf '%s\n' "$*"; }
+
+# 1. Copilot skills (the set this project ships)
+for s in hypervisor microvm microvm-operate suite; do
+  [ -e "$SK/$s" ] && rm -rf "$SK/$s" || true
+done
+say "✓ removed Copilot skills"
+
+# 2. web console + staged files
+rm -rf "$HOME/.copilot"
+say "✓ removed ~/.copilot (web console + launcher)"
+
+# 3. commands
+rm -f "$DEST/copilot-web" "$DEST/copilot-update"
+say "✓ removed copilot-web, copilot-update"
+
+# 4. optionally the rantaiclaw binary + bun
+if [ "${1:-}" = "--all" ]; then
+  rm -f "$DEST/rantaiclaw" "$DEST/bun"
+  say "✓ removed rantaiclaw binary + bun"
+  say "  (for profile data / config, run 'rantaiclaw uninstall' BEFORE this if the binary is already gone)"
+else
+  say "  kept rantaiclaw binary — remove it too with: copilot-uninstall --all"
+fi
+
+# 5. self-remove the command (safe while running; the open inode stays valid)
+rm -f "$DEST/copilot-uninstall"
+say "✓ done — RantAI-Copilot extension removed"
