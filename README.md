@@ -49,7 +49,7 @@ local/on-prem model); only the install/fetch differs.
 ### Online mode (has internet)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/RantAI-dev/RantAI-Copilot/master/get.sh | bash
+curl -fsSL https://raw.githubusercontent.com/RantAI-dev/RantAI-Copilot/main/get.sh | bash
 rantaiclaw onboard      # set your LLM provider + key
 rantaiclaw chat         # CLI agent
 copilot-web             # web console → http://localhost:3939 (fetches claw-ui on first run)

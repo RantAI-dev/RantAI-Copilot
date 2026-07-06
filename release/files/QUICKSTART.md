@@ -8,7 +8,7 @@ This bundle contains everything to **operate a Hypervisor cluster from a prompt*
 
 **One-liner (recommended):**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/RantAI-dev/RantAI-Copilot/master/get.sh | bash
+curl -fsSL https://raw.githubusercontent.com/RantAI-dev/RantAI-Copilot/main/get.sh | bash
 rantaiclaw onboard      # set your LLM provider + key (OpenRouter / Anthropic / MiniMax)
 ```
 

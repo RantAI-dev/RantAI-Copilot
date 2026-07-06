@@ -3,7 +3,7 @@
 # rantaiclaw + the hypervisor skill), verifies its checksum, installs the binary, and deploys
 # the skills. Non-interactive — safe to pipe:
 #
-#   curl -fsSL https://raw.githubusercontent.com/RantAI-dev/RantAI-Copilot/master/get.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/RantAI-dev/RantAI-Copilot/main/get.sh | bash
 #
 # It does NOT run onboard (that needs a terminal) — it prints the one command to run next.
 # Env: COPILOT_AGENT_VERSION (default: latest) · BINDIR (default ~/.local/bin) · RANTAICLAW_PROFILE
@@ -106,7 +106,7 @@ if [ -f "$BDIR/web-ui.sh" ]; then
 # rantaiclaw binary (latest upstream release you publish).
 set -e
 printf '→ updating RantAI-Copilot bundle…\n'
-curl -fsSL https://raw.githubusercontent.com/RantAI-dev/RantAI-Copilot/master/get.sh | COPILOT_QUIET=1 sh
+curl -fsSL https://raw.githubusercontent.com/RantAI-dev/RantAI-Copilot/main/get.sh | COPILOT_QUIET=1 sh
 if command -v rantaiclaw >/dev/null 2>&1; then
   printf '→ rantaiclaw binary…\n'
   # Show the real result (don't hide it) so a failed update isn't mistaken for "latest".
