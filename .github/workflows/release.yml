@@ -2,7 +2,8 @@ name: release
 
 # Build and publish the online + airgapped bundles whenever a version tag is pushed.
 # The rantaiclaw binary is ALWAYS pulled from the latest RantAI-dev/RantAIClaw release;
-# claw-ui is fetched latest at build time (baked into the airgapped bundle, on-demand online).
+# claw-ui comes from `rantaiclaw ui install` (the signed claw-ui release that rantaiclaw pins —
+# baked into the airgapped bundle, fetched on-demand online).
 on:
   push:
     tags: ['v*']
@@ -59,10 +60,11 @@ jobs:
           set -euo pipefail
           TAG="${{ steps.tag.outputs.tag }}"
           RC_VER="$(tar xzOf "dist/rantai-copilot-${TAG}-x86_64-linux.tar.gz" "rantai-copilot-${TAG}-x86_64-linux/VERSION" 2>/dev/null | grep -m1 '^rantaiclaw=' | cut -d= -f2-)"
+          CLAW_UI_VER="$(tar xzOf "dist/rantai-copilot-airgapped-${TAG}-x86_64-linux.tar.gz" "rantai-copilot-airgapped-${TAG}-x86_64-linux/VERSION" 2>/dev/null | grep -m1 '^claw_ui=' | cut -d= -f2-)"
           {
             echo "Automated build — hypervisor skill + online/airgapped installers."
             echo ""
-            echo "Bundled rantaiclaw: ${RC_VER} · claw-ui latest"
+            echo "Bundled rantaiclaw: ${RC_VER} · claw-ui ${CLAW_UI_VER:-pinned}"
             echo ""
             echo "- Online: \`curl -fsSL https://raw.githubusercontent.com/$REPO/main/get.sh | bash\`"
             echo "- Airgapped: download the \`-airgapped-\` tarball, then \`./setup-airgapped.sh\`"
