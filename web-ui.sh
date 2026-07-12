@@ -52,7 +52,7 @@ fi
 
 # fetch / update claw-ui — unless offline (airgapped), where $UIDIR is pre-provisioned.
 if [ "$OFFLINE" = 1 ]; then
-  [ -d "$UIDIR/src" ] && [ -d "$UIDIR/node_modules" ] || {
+  [ -f "$UIDIR/server.js" ] && [ -d "$UIDIR/node_modules" ] || {
     warn "COPILOT_OFFLINE=1 but $UIDIR is not provisioned — run the airgapped setup first"; exit 1; }
   say "  (offline: using pre-fetched claw-ui)"
 else

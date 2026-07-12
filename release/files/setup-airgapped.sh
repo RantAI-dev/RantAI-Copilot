@@ -60,7 +60,7 @@ if [ -f "$HERE/copilot-uninstall" ]; then
   install -m755 "$HERE/copilot-uninstall" "$CPDIR/copilot-uninstall"
   ln -sf "$CPDIR/copilot-uninstall" "$DEST/copilot-uninstall"
 fi
-if [ -d "$HERE/web-ui/src" ] && [ -d "$HERE/web-ui/node_modules" ]; then
+if [ -f "$HERE/web-ui/server.js" ] && [ -d "$HERE/web-ui/node_modules" ]; then
   rm -rf "$CPDIR/web-ui"; cp -r "$HERE/web-ui" "$CPDIR/web-ui"
   : > "$CPDIR/offline"                      # marker → copilot-web runs offline (skips fetch)
   say "✓ web console (prebuilt, offline) → run: copilot-web"
