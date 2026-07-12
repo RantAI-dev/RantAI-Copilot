@@ -35,58 +35,97 @@ See [ROADMAP.md](ROADMAP.md). Each new skill adds a playbook under `skill/` and 
 
 ## Prerequisites
 
-1. **RantaiClaw** — the prebuilt bundle (below) ships it; from source see *From source*.
-2. **An LLM provider** configured in RantaiClaw (`rantaiclaw onboard`) — the agent is model-driven.
-3. **`kubectl` on your machine + a kubeconfig.** The hypervisor skill drives the cluster **locally**
-   over `kubectl` (not over SSH). Drop the kubeconfig in the RantaiClaw workspace as
-   `kubeconfig-hypervisor` (the skill can install/rotate it for you).
+- **A reachable LLM** — a cloud provider + API key, or a local/on-prem model. Needed for **every**
+  mode; the agent is model-driven and does nothing without one. You set it with `rantaiclaw onboard`
+  right after install.
+- **RantaiClaw** — the prebuilt bundle below ships it for you (Linux x86_64). Only *From source*
+  asks you to install RantaiClaw yourself.
+- **For the hypervisor skill only** — `kubectl` on your machine + a kubeconfig. The skill drives the
+  cluster **locally** over `kubectl` (not SSH). Put the kubeconfig in the RantaiClaw workspace as
+  `kubeconfig-hypervisor` (the skill can install/rotate it for you). Not needed just to install or chat.
 
 ## Install the agent
 
-Two modes — pick your network situation. Both need a reachable **LLM** (cloud API by key, or a
-local/on-prem model); only the install/fetch differs.
+Pick the mode that matches your network — **every mode needs a reachable LLM** (a cloud API key or
+a local model); only *how you get the software* differs. The prebuilt bundle is **Linux x86_64
+(glibc)**; anything else uses *From source*.
 
-### Online mode (has internet)
+| Mode | Use it when | What it fetches |
+|---|---|---|
+| **Online** | the machine has internet | binary + skills now; web console on first `copilot-web` |
+| **Airgapped** | no GitHub / npm / bun.sh access | nothing — the bundle is fully pre-packaged |
+| **From source** | other CPU/OS, or your own RantaiClaw build | this git repo |
 
+### Online mode
+
+**1 — Install.** Downloads the latest bundle, verifies its checksum, installs the binary + skills:
 ```bash
 curl -fsSL https://raw.githubusercontent.com/RantAI-dev/RantAI-Copilot/main/get.sh | bash
-rantaiclaw onboard      # set your LLM provider + key
-rantaiclaw chat         # CLI agent
-copilot-web             # web console → http://localhost:3939 (fetches claw-ui on first run)
-copilot-update          # update everything later (binary + skills + web console)
+```
+The binary is installed to `~/.local/bin`. If the output warns it's **not on your PATH**, add it
+(then open a new shell):
+```bash
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc && export PATH="$HOME/.local/bin:$PATH"
 ```
 
-### Airgapped mode (no GitHub/npm/bun.sh access)
+**2 — Configure your LLM** (once). Sets a provider + key, or points at a local model:
+```bash
+rantaiclaw onboard
+```
 
-Nothing is fetched at install or run — everything is pre-packaged (the LLM API still needs to be
-reachable, e.g. by key or a local model). Because there's no fetch, **you download the bundle
-first** — for both install *and* updates.
+**3 — Run it:**
+```bash
+rantaiclaw chat        # chat in the terminal
+copilot-web            # web console → http://localhost:3939  (first run fetches claw-ui, ~1 min)
+```
 
-1. On a machine **with** internet, download from
-   [Releases](https://github.com/RantAI-dev/RantAI-Copilot/releases/latest) (Linux x86_64):
-   `rantai-copilot-airgapped-<version>-x86_64-linux.tar.gz`
-2. Transfer it to the airgapped host (USB/scp), then:
-   ```bash
-   tar xzf rantai-copilot-airgapped-<version>-x86_64-linux.tar.gz
-   cd rantai-copilot-airgapped-<version>-x86_64-linux
-   ./setup-airgapped.sh        # installs rantaiclaw + skills + bun + prebuilt web console — no network
-   export OPENROUTER_API_KEY="sk-..."   # or point ~/.rantaiclaw/config.toml at your local model
-   rantaiclaw chat
-   copilot-web                 # web console → http://localhost:3939 (offline)
-   ```
+**Check it worked:** `rantaiclaw --version` prints a version, and `copilot-web` opens the console.
+**Update later:** `copilot-update` refreshes everything (binary + skills + web console).
 
-**Updating (airgapped)** — there's no fetch, so updating means downloading again: grab the newer
-`rantai-copilot-airgapped-<version>` bundle on a connected machine, transfer it, and re-run
-`./setup-airgapped.sh`. You can also rebuild the bundle on a connected **same-arch** host:
-`release/pack-airgapped.sh <rantaiclaw-binary> <tag>`.
+### Airgapped mode
+
+No network at install **or** run — everything is pre-packaged. (Your LLM still has to be reachable:
+a key, or a local model.) Since nothing is fetched, **you download the bundle on a connected machine
+first** — that's also how you update.
+
+**1 — On a machine with internet**, download the airgapped tarball from
+[Releases](https://github.com/RantAI-dev/RantAI-Copilot/releases/latest) (Linux x86_64):
+`rantai-copilot-airgapped-<version>-x86_64-linux.tar.gz`
+
+**2 — Move it to the airgapped host** (USB / scp) and extract:
+```bash
+tar xzf rantai-copilot-airgapped-<version>-x86_64-linux.tar.gz
+cd rantai-copilot-airgapped-<version>-x86_64-linux
+```
+
+**3 — Install** — no network needed. Installs rantaiclaw + skills + a bun runtime + the prebuilt
+web console, then walks you through `rantaiclaw onboard` to set your LLM provider + key:
+```bash
+./setup-airgapped.sh
+```
+
+**4 — Run it:**
+```bash
+rantaiclaw chat        # chat in the terminal
+copilot-web            # web console → http://localhost:3939  (runs offline)
+```
+> Skipped the onboard prompt during setup? Configure your LLM before chatting: `rantaiclaw onboard`
+> (or, for OpenRouter, `export OPENROUTER_API_KEY="sk-..."`).
+
+**Update** (there is no online update): download a newer `rantai-copilot-airgapped-<version>`
+bundle on a connected machine, transfer it, and re-run `./setup-airgapped.sh`. To build the bundle
+yourself on a connected **same-arch** host: `release/pack-airgapped.sh <rantaiclaw-binary> <tag>`.
 
 ### From source (other platforms, or your own RantaiClaw)
 
+For CPUs/OSes the prebuilt bundle doesn't cover, or to use a RantaiClaw you built yourself. Install
+[RantaiClaw](https://github.com/RantAI-dev/RantAIClaw#install) first (it must be on your `PATH`), then:
 ```bash
 git clone https://github.com/RantAI-dev/RantAI-Copilot
 cd RantAI-Copilot
 ./install.sh            # deploy the skills into your RantaiClaw workspace
-./web-ui.sh             # web console → http://localhost:3939
+rantaiclaw onboard      # set your LLM provider + key (if you haven't)
+./web-ui.sh             # web console → http://localhost:3939  (later installed as: copilot-web)
 ```
 
 ## Hypervisor
@@ -112,18 +151,21 @@ mutation with a follow-up `kubectl get`. Needs `kubectl` locally (see Prerequisi
 ## Web console
 
 **The easiest way to use the agent** — chat with it and watch it work, in your browser. The console
-is upstream [claw-ui](https://github.com/RantAI-dev/claw-ui) (RantaiClaw), fetched on demand into
-`~/.copilot/web-ui` and served as-is.
+is upstream [claw-ui](https://github.com/RantAI-dev/claw-ui), installed on demand into
+`~/.copilot/web-ui` from a signed prebuilt release and served as a production build.
 
 ```bash
-./web-ui.sh        # fetch + deps + start → http://localhost:3939   (installed: copilot-web)
-./web-ui.sh stop   # stop console + gateway
+copilot-web         # first run: fetch (~1 min) + start → http://localhost:3939
+copilot-web stop    # stop the console + gateway
 ```
 
+From a source checkout (before `copilot-web` is on your PATH) use `./web-ui.sh` — it's the same launcher.
+
 Notes:
-- `rantaiclaw ui start` brings up **both the gateway and the console** — no separate step.
-- `web-ui.sh` always passes `--dir ~/.copilot/web-ui`; run it rather than `rantaiclaw ui install`
-  directly.
+- First run downloads claw-ui; later runs start instantly. Airgapped installs serve the bundled
+  copy with no fetch.
+- `copilot-web` / `web-ui.sh` bring up **both the gateway and the console** and always target
+  `~/.copilot/web-ui` — use them rather than calling `rantaiclaw ui install` / `ui start` directly.
 
 ## What's in here
 
