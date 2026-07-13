@@ -15,6 +15,7 @@ done
 HERE="$(cd -P "$(dirname "$SELF")" && pwd)"
 UIDIR="${COPILOT_UI_DIR:-$HOME/.copilot/web-ui}"
 PORT="${COPILOT_UI_PORT:-3939}"
+HOST="${COPILOT_UI_HOST:-}"       # e.g. 0.0.0.0 to reach the console from your LAN (enable a login first — see README)
 VERBOSE="${COPILOT_VERBOSE:-0}"
 OFFLINE="${COPILOT_OFFLINE:-0}"   # airgapped: skip the online fetch, use a pre-provisioned $UIDIR
 [ "$OFFLINE" != 1 ] && [ -f "$HOME/.copilot/offline" ] && OFFLINE=1   # marker dropped by setup-airgapped.sh
@@ -74,5 +75,8 @@ if port_busy "$PORT"; then
   port_busy "$PORT" && { warn "could not free :$PORT — stop the other console, then re-run"; exit 1; } || true
 fi
 
-q rantaiclaw ui start --dir "$UIDIR" --port "$PORT" || { warn "start failed — see $LOG"; exit 1; }
+if [ -n "$HOST" ] && [ "$HOST" != 127.0.0.1 ] && [ "$HOST" != localhost ]; then
+  warn "binding to $HOST — the console (full agent control) will be reachable on your LAN; set a login first: rantaiclaw setup login"
+fi
+q rantaiclaw ui start --dir "$UIDIR" --port "$PORT" ${HOST:+--host "$HOST"} || { warn "start failed — see $LOG"; exit 1; }
 say "✓ RantAI Copilot console → http://localhost:$PORT   (stop: copilot-web stop)"

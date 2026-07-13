@@ -168,6 +168,22 @@ Notes:
 - `copilot-web` / `web-ui.sh` bring up **both the gateway and the console** and always target
   `~/.copilot/web-ui` — use them rather than calling `rantaiclaw ui install` / `ui start` directly.
 
+### Reach it from another machine (LAN)
+
+By default the console binds to **loopback** (`127.0.0.1`) — only this machine can open it. That's
+deliberate: the console has **full control of the agent**, so LAN access is explicit opt-in. On a
+**trusted** network, expose it in two steps:
+
+```bash
+rantaiclaw setup login                 # 1. set a console username + password (do this FIRST)
+COPILOT_UI_HOST=0.0.0.0 copilot-web    # 2. bind all interfaces → http://<this-machine-ip>:3939
+```
+
+- **Permanent:** put `host = "0.0.0.0"` under `[ui]` in `~/.rantaiclaw/profiles/default/config.toml`;
+  then a plain `copilot-web` binds to the LAN too.
+- **Don't want to expose it?** Leave the default and tunnel instead — from your laptop run
+  `ssh -L 3939:127.0.0.1:3939 <user>@<this-machine>`, then open `http://localhost:3939`.
+
 ## What's in here
 
 ```
