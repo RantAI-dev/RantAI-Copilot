@@ -36,7 +36,7 @@ See [ROADMAP.md](ROADMAP.md). Each new skill adds a playbook under `skill/` and 
 ## Prerequisites
 
 - **A reachable LLM** — a cloud provider + API key, or a local/on-prem model. Needed for **every**
-  mode; the agent is model-driven and does nothing without one. You set it with `rantaiclaw onboard`
+  mode; the agent is model-driven and does nothing without one. You set it with `rantaiclaw setup`
   right after install.
 - **RantaiClaw** — the prebuilt bundle below ships it for you (Linux x86_64). Only *From source*
   asks you to install RantaiClaw yourself.
@@ -68,9 +68,9 @@ The binary is installed to `~/.local/bin`. If the output warns it's **not on you
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc && export PATH="$HOME/.local/bin:$PATH"
 ```
 
-**2 — Configure your LLM** (once). Sets a provider + key, or points at a local model:
+**2 — Configure your LLM** (once). The setup wizard walks you through the provider + key (and more):
 ```bash
-rantaiclaw onboard
+rantaiclaw setup
 ```
 
 **3 — Run it:**
@@ -99,18 +99,19 @@ cd rantai-copilot-airgapped-<version>-x86_64-linux
 ```
 
 **3 — Install** — no network needed. Installs rantaiclaw + skills + a bun runtime + the prebuilt
-web console, then walks you through `rantaiclaw onboard` to set your LLM provider + key:
+web console (it does not touch your config):
 ```bash
 ./setup-airgapped.sh
 ```
 
-**4 — Run it:**
+**4 — Configure your LLM, then run.** `setup provider` sets just the LLM and needs no network:
 ```bash
-rantaiclaw chat        # chat in the terminal
-copilot-web            # web console → http://localhost:3939  (runs offline)
+rantaiclaw setup provider     # provider + key, offline
+rantaiclaw chat               # chat in the terminal
+copilot-web                   # web console → http://localhost:3939  (runs offline)
 ```
-> Skipped the onboard prompt during setup? Configure your LLM before chatting: `rantaiclaw onboard`
-> (or, for OpenRouter, `export OPENROUTER_API_KEY="sk-..."`).
+> The full `rantaiclaw setup` also walks channels / MCP, and those sections need network — on a
+> fully offline host stick to `rantaiclaw setup provider`.
 
 **Update** (there is no online update): download a newer `rantai-copilot-airgapped-<version>`
 bundle on a connected machine, transfer it, and re-run `./setup-airgapped.sh`. To build the bundle
@@ -124,7 +125,7 @@ For CPUs/OSes the prebuilt bundle doesn't cover, or to use a RantaiClaw you buil
 git clone https://github.com/RantAI-dev/RantAI-Copilot
 cd RantAI-Copilot
 ./install.sh            # deploy the skills into your RantaiClaw workspace
-rantaiclaw onboard      # set your LLM provider + key (if you haven't)
+rantaiclaw setup        # set your LLM provider + key (if you haven't)
 ./web-ui.sh             # web console → http://localhost:3939  (later installed as: copilot-web)
 ```
 

@@ -18,7 +18,7 @@ against the cluster; it never invents data and confirms before it changes anythi
 
 - `kubectl` on your machine (the agent runs it locally).
 - A kubeconfig for the cluster — from your cluster UI (Rancher) → cluster → **Download KubeConfig**.
-- RantaiClaw with an LLM provider (`rantaiclaw onboard`) and the `hypervisor` skill
+- RantaiClaw with an LLM provider (`rantaiclaw setup`) and the `hypervisor` skill
   deployed (`./install.sh`).
 
 ## 2. Give the agent the kubeconfig

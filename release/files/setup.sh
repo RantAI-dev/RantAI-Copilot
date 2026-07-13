@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # One-command setup for the pre-set-up RantAI-Copilot bundle.
-# Installs the bundled rantaiclaw, deploys the skills, and onboards your LLM key.
+# Installs the bundled rantaiclaw and deploys the skills (configure your LLM afterward).
 # Usage: ./setup.sh            (override install dir with BINDIR=, profile with RANTAICLAW_PROFILE=)
 set -euo pipefail
 say() { printf '%s\n' "$*"; }
@@ -24,23 +24,16 @@ case ":$PATH:" in
   *) say "  ⚠ $DEST is not on your PATH — add it:  export PATH=\"$DEST:\$PATH\"" ;;
 esac
 
-# 3. LLM provider + key (reuse rantaiclaw's own onboarding if nothing is configured yet)
+# 3. LLM provider + key — configure it yourself after install (kept separate from install).
 PROFILE="${RANTAICLAW_PROFILE:-default}"
 CFG="$HOME/.rantaiclaw/profiles/$PROFILE/config.toml"
-if [ ! -f "$CFG" ]; then
-  if [ -n "${NONINTERACTIVE:-}" ]; then
-    say "→ No LLM provider configured yet. When ready, run:  rantaiclaw onboard"
-  else
-    say ""
-    say "→ No config yet. Launching 'rantaiclaw onboard' to set your LLM provider + API key…"
-    say "  (or Ctrl-C and set api_key/default_provider in $CFG yourself)"
-    "$DEST/rantaiclaw" onboard </dev/tty || say "! onboard skipped — configure a provider/key before running"
-  fi
-else
+if [ -f "$CFG" ]; then
   say "✓ existing config: $CFG (leaving it as-is)"
+else
+  say "→ set your LLM provider + key after install:  rantaiclaw setup"
 fi
 
-# 4. deploy the skills AFTER onboarding (onboard --force can wipe the workspace)
+# 4. deploy the skills
 SK="$HOME/.rantaiclaw/profiles/$PROFILE/workspace/skills"
 N=0
 for d in "$HERE"/skill/*/; do
@@ -75,7 +68,7 @@ fi
 cat <<EOF
 
 Done. Next:
-  rantaiclaw onboard   # set your LLM provider + key (if you haven't)
+  rantaiclaw setup     # set your LLM provider + key (if you haven't)
   copilot-web          # web console → http://localhost:3939
 
 Operate a Hypervisor cluster (after a kubeconfig is in the workspace):

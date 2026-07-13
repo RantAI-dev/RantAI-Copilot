@@ -5,7 +5,7 @@
 #
 #   curl -fsSL https://raw.githubusercontent.com/RantAI-dev/RantAI-Copilot/main/get.sh | bash
 #
-# It does NOT run onboard (that needs a terminal) — it prints the one command to run next.
+# It does NOT configure your LLM (that needs a terminal) — it prints the one command to run next.
 # Env: COPILOT_AGENT_VERSION (default: latest) · BINDIR (default ~/.local/bin) · RANTAICLAW_PROFILE
 #
 # POSIX-sh safe: works whether piped to `sh` (dash on Debian/Ubuntu) or `bash`.
@@ -126,7 +126,7 @@ fi
 PATHHINT=""; case ":$PATH:" in *":$DEST:"*) ;; *) PATHHINT="export PATH=\"$DEST:\$PATH\";  ";; esac
 say ""
 say "Ready:"
-say "  ${PATHHINT}rantaiclaw onboard      # set LLM provider/key (once)"
+say "  ${PATHHINT}rantaiclaw setup        # set LLM provider/key (once)"
 say "  rantaiclaw chat                    # CLI agent"
 say "  copilot-web                        # web console → http://localhost:3939"
 say "  copilot-update                     # update everything later"

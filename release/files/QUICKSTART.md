@@ -9,7 +9,7 @@ This bundle contains everything to **operate a Hypervisor cluster from a prompt*
 **One-liner (recommended):**
 ```bash
 curl -fsSL https://raw.githubusercontent.com/RantAI-dev/RantAI-Copilot/main/get.sh | bash
-rantaiclaw onboard      # set your LLM provider + key (OpenRouter / Anthropic / MiniMax)
+rantaiclaw setup        # set your LLM provider + key (OpenRouter / Anthropic / MiniMax)
 ```
 
 **Or from this bundle** (if you downloaded the tarball):
@@ -18,8 +18,8 @@ tar xzf rantai-copilot-*-x86_64-linux.tar.gz
 cd rantai-copilot-*-x86_64-linux
 ./setup.sh
 ```
-Either way: installs `rantaiclaw` to `~/.local/bin` and deploys the skills (the one-liner
-prints the `onboard` step; `setup.sh` runs it for you).
+Either way: installs `rantaiclaw` to `~/.local/bin` and deploys the skills. Configure your LLM
+afterward with `rantaiclaw setup` (both the one-liner and `setup.sh` leave this to you).
 
 > Linux x86_64 only (the binary is static, runs on any modern distro). Other platforms: build
 > from source — see the repo README.

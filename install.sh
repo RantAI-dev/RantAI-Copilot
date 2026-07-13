@@ -53,7 +53,7 @@ fi
 
 say ""
 say "Done. Next:"
-say "  rantaiclaw onboard   # set your LLM provider + key (if you haven't)"
+say "  rantaiclaw setup     # set your LLM provider + key (if you haven't)"
 say "  ./web-ui.sh          # launch the web console → http://localhost:3939"
 say ""
 say "  # operate a Hypervisor cluster (after a kubeconfig is in the workspace):"

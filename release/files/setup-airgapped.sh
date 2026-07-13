@@ -4,7 +4,6 @@
 # + a bundled bun runtime. Use on a restricted host that can't reach GitHub/npm/bun.sh.
 #
 # Usage: ./setup-airgapped.sh            (BINDIR= to change install dir; RANTAICLAW_PROFILE=)
-#        NONINTERACTIVE=1 ./setup-airgapped.sh   (skip the onboarding prompt)
 set -euo pipefail
 say() { printf '%s\n' "$*"; }
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -29,15 +28,13 @@ if [ -x "$HERE/bun/bun" ] && ! command -v bun >/dev/null 2>&1 && ! command -v np
   say "✓ bun → $DEST/bun"
 fi
 
-# 3. LLM key (local prompt; no network). The LLM API is still reached by key/local model.
+# 3. LLM provider + key — configure it yourself after install (kept separate from install).
+#    'setup provider' sets just the LLM and needs no network — safe on an airgapped host.
 CFG="$HOME/.rantaiclaw/profiles/$PROFILE/config.toml"
 if [ -f "$CFG" ]; then
   say "✓ existing config: $CFG (left as-is)"
-elif [ -n "${NONINTERACTIVE:-}" ]; then
-  say "→ configure a provider/key later:  rantaiclaw onboard   (or export OPENROUTER_API_KEY=…)"
 else
-  say "→ launching 'rantaiclaw onboard' (Ctrl-C to skip)…"
-  "$DEST/rantaiclaw" onboard </dev/tty || say "! onboard skipped — set a provider/key before use"
+  say "→ set your LLM provider + key after install:  rantaiclaw setup provider   (offline)"
 fi
 
 # 4. skills
@@ -86,6 +83,7 @@ say "✓ copilot-update → prints the offline update steps"
 
 say ""
 say "Done (airgapped). Next:"
-say "  rantaiclaw chat        # CLI agent"
-say "  copilot-web            # web console → http://localhost:3939  (offline)"
+say "  rantaiclaw setup provider   # set your LLM provider + key (offline, LLM only)"
+say "  rantaiclaw chat             # CLI agent"
+say "  copilot-web                 # web console → http://localhost:3939  (offline)"
 say "  # updates: bring a newer rantai-copilot-airgapped bundle, re-run ./setup-airgapped.sh"
