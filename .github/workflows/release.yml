@@ -33,8 +33,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          # newest release (index 0 includes prereleases/alpha)
-          RC_TAG="$(gh api repos/RantAI-dev/RantAIClaw/releases --jq '.[0].tag_name')"
+          # newest published release (prereleases/alpha count; drafts have no downloadable assets)
+          RC_TAG="$(gh api repos/RantAI-dev/RantAIClaw/releases --jq '[.[] | select(.draft==false)][0].tag_name')"
           echo "rantaiclaw release: $RC_TAG"
           gh release download "$RC_TAG" -R RantAI-dev/RantAIClaw \
             -p 'rantaiclaw-x86_64-unknown-linux-gnu.tar.gz' -p 'SHA256SUMS' -D rc
